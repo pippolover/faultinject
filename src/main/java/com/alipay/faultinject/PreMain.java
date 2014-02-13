@@ -4,6 +4,10 @@
  */
 package com.alipay.faultinject;
 
+import java.lang.instrument.Instrumentation;
+
+import com.alipay.faultinject.transformer.falutInjectTransformer;
+
 /**
  * 
  * @author yimingwym 
@@ -11,7 +15,8 @@ package com.alipay.faultinject;
  */
 public class PreMain {
 
-    public static void premain(String agentArgs) {
+    public static void premain(String agentArgs, Instrumentation inst) {
+        inst.addTransformer(new falutInjectTransformer());
         System.out.println("in premain method");
     }
 
