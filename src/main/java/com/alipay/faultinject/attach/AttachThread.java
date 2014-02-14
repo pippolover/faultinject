@@ -31,22 +31,31 @@ public class AttachThread extends Thread {
         List<VirtualMachineDescriptor> vmAfter = null;
 
         try {
-            while (true) {
-                vmAfter = VirtualMachine.list();
-                for (VirtualMachineDescriptor vmd : vmAfter) {
-                    if (!vmBefore.contains(vmd)) {
-                        System.out.println("vmd name=" + vmd.displayName());
-                        vm = VirtualMachine.attach(vmd);
-                        System.out.println("get target vm then break");
-                        break;
-                    }
-                }
-                if (vm != null) {
+            /*            while (true) {
+                            vmAfter = VirtualMachine.list();
+                            for (VirtualMachineDescriptor vmd : vmAfter) {
+                                if (!vmBefore.contains(vmd)) {
+                                    System.out.println("vmd name=" + vmd.displayName());
+                                    vm = VirtualMachine.attach(vmd);
+                                    System.out.println("get target vm then break");
+                                    break;
+                                }
+                            }
+
+                            if (vm != null) {
+                                break;
+                            }
+                        }*/
+            vmAfter = VirtualMachine.list();
+            for (VirtualMachineDescriptor vmd : vmAfter) {
+                if (vmd.displayName().contains("TestClass")) {
+                    vm = VirtualMachine.attach(vmd);
+                    vm.loadAgent(agentJar);
+                    vm.detach();
                     break;
                 }
             }
-            vm.loadAgent(agentJar);
-            vm.detach();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

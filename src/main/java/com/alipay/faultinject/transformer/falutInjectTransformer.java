@@ -35,10 +35,11 @@ public class falutInjectTransformer implements ClassFileTransformer {
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
                                                                                       throws IllegalClassFormatException {
-        System.out.println(needToTrans + ":" + className);
-        if (className.equals(needToTrans.replace(".", "/"))) {
-            System.err.println("start to transform class");
 
+        if (className.equals(needToTrans.replace(".", "/"))) {
+
+            System.err.println("start to transform class");
+            System.out.println(needToTrans + ":" + className);
             ClassReader cr;
             try {
                 cr = new ClassReader(className.replace("/", "."));
