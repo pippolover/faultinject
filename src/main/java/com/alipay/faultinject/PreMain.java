@@ -16,7 +16,7 @@ import com.alipay.faultinject.transformer.falutInjectTransformer;
 public class PreMain {
 
     public static void premain(String agentArgs, Instrumentation inst) {
-        inst.addTransformer(new falutInjectTransformer());
+        inst.addTransformer(new falutInjectTransformer(""));
         System.out.println("in premain method");
     }
 

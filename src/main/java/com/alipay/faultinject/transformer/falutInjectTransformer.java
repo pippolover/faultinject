@@ -22,19 +22,26 @@ import com.alipay.faultinject.asm.adapter.faultInjectAdapter;
  */
 public class falutInjectTransformer implements ClassFileTransformer {
 
+    private final String needToTrans;
+
+    public falutInjectTransformer(String needToTrans) {
+        this.needToTrans = needToTrans;
+    }
+
     /** 
      * @see java.lang.instrument.ClassFileTransformer#transform(java.lang.ClassLoader, java.lang.String, java.lang.Class, java.security.ProtectionDomain, byte[])
      */
+    @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
                                                                                       throws IllegalClassFormatException {
+        System.out.println(needToTrans + ":" + className);
+        if (className.equals(needToTrans.replace(".", "/"))) {
+            System.err.println("start to transform class");
 
-        if (className.equals("com/alipay/asmtest/beans/TestClass")) {
-            System.out.println("start to transform class");
-            System.err.println(className);
             ClassReader cr;
             try {
-                cr = new ClassReader("com.alipay.asmtest.beans.TestClass");
+                cr = new ClassReader(className.replace("/", "."));
                 ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
                 ClassVisitor classVisitor = new faultInjectAdapter(cw);
 

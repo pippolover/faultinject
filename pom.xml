@@ -19,8 +19,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0.2</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 					<encoding>GBK</encoding>
 				</configuration>
 			</plugin>
@@ -31,7 +31,8 @@
 				<configuration>
 					<archive>
 						<manifestEntries>
-							<Premain-Class>com.alipay.faultinject.PreMain</Premain-Class>
+							<!-- <Premain-Class>com.alipay.faultinject.PreMain</Premain-Class> -->
+							<Agent-Class>com.alipay.faultinject.FaultInjectAgentMain</Agent-Class>
 
 						</manifestEntries>
 					</archive>
