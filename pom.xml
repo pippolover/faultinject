@@ -16,6 +16,11 @@
 			<artifactId>asm-util</artifactId>
 			<version>4.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-analysis</artifactId>
+			<version>4.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
