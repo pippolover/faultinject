@@ -6,7 +6,9 @@ package com.alipay.faultinject.rmi.client;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Properties;
 
+import com.alipay.faultinject.attach.utils.RemoteInfoUtils;
 import com.alipay.faultinject.rmi.InvokeService;
 
 /**
@@ -23,7 +25,7 @@ public class InvokeServiceClient {
         this.port = port;
     }
 
-    public void call() throws Exception {
+    public InvokeService call() throws Exception {
         Registry registry = LocateRegistry.getRegistry(host, port);
         if (registry != null) {
             String[] availRemoteServices = registry.list();
@@ -31,13 +33,29 @@ public class InvokeServiceClient {
                 System.out.println("Service " + i + ": " + availRemoteServices[i]);
             }
         }
-        InvokeService rmiServer = (InvokeService) (registry.lookup("samplermi"));
-        rmiServer.invokeFaultInject();
+        InvokeService rmiServer = (InvokeService) (registry.lookup("faultInjectService"));
 
+        return rmiServer;
+    }
+
+    public void genConfig(InvokeService service, Properties pros) throws Exception {
+        service.genConfig(pros);
+    }
+
+    public void injectFault(InvokeService service, String pid) throws Exception {
+        service.invokeFaultInject(pid);
     }
 
     public static void main(String[] args) throws Exception {
+        String pid = new RemoteInfoUtils("dlslock2.d59.alipay.net", "9981").getRemotePid();
         InvokeServiceClient client = new InvokeServiceClient("dlslock2.d59.alipay.net", 10024);
-        client.call();
+        InvokeService service = client.call();
+        Properties pros = new Properties();
+        pros.put("class", "com.alipay.lock.processor.policy.RepleaseQueuePolicy");
+        pros.put("method", "getHashIndex");
+        pros.put("fault", "runtimeException");
+        client.genConfig(service, pros);
+        client.injectFault(service, pid);
+
     }
 }

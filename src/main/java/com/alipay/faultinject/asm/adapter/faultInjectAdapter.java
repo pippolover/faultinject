@@ -18,8 +18,13 @@ import com.alipay.faultinject.asm.constant.ASMEXCEPTIONS;
  */
 public class faultInjectAdapter extends ClassVisitor {
 
-    public faultInjectAdapter(ClassVisitor classvisitor) {
+    private final String methodName;
+    private final String injectFault;
+
+    public faultInjectAdapter(ClassVisitor classvisitor, String methodName, String injectFault) {
         super(ASM4, classvisitor);
+        this.methodName = methodName;
+        this.injectFault = injectFault;
     }
 
     @Override
@@ -27,25 +32,23 @@ public class faultInjectAdapter extends ClassVisitor {
                                      String[] exceptions) {
         MethodVisitor methodVisitor = cv.visitMethod(access, name, desc, signature, exceptions);
 
-        if (name.equalsIgnoreCase("sayName")) {
-            MethodVisitor addSleepVisitor = new addSleepMethodAdapter(methodVisitor);
-
-            return addSleepVisitor;
-        } else if (name.equalsIgnoreCase("sayHello")) {
-            /**
-             * 不需要修改method级别的throws Exception
-             * 因为模拟异常时，如果会throw 某种exception，方法中肯定已经包含了此种exception
-             * runtime Exception 可以不申明就throw
-             */
-
-            MethodVisitor throwExceptionVisitor = new throwExceptionAdapter(methodVisitor,
-                ASMEXCEPTIONS.NULLPOINTEXCEPTION);
-
-            return throwExceptionVisitor;
+        if (name.equalsIgnoreCase(methodName)) {
+            return genMethodVisitor(injectFault, methodVisitor);
         } else {
             return methodVisitor;
         }
 
+    }
+
+    private MethodVisitor genMethodVisitor(String injectFault, MethodVisitor methodVisitor) {
+        if (injectFault == null) {
+            return methodVisitor;
+        } else if (injectFault.startsWith("sleep")) {
+            return new addSleepMethodAdapter(methodVisitor);
+        } else if (injectFault.startsWith("runtimeException")) {
+            return new throwExceptionAdapter(methodVisitor, ASMEXCEPTIONS.NULLPOINTEXCEPTION);
+        }
+        return methodVisitor;
     }
 
     public static void main(String[] args) {

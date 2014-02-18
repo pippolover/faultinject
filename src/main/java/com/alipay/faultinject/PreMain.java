@@ -16,8 +16,7 @@ import com.alipay.faultinject.rmi.server.InvokeServiceServer;
 public class PreMain {
 
     public static void premain(String agentArgs, Instrumentation inst) {
-        //        inst.addTransformer(new falutInjectTransformer(""));
-        //        System.out.println("in premain method");
+
         System.out.println("do nothing");
         try {
             InvokeServiceServer is = new InvokeServiceServer();

@@ -31,7 +31,7 @@ public class throwExceptionAdapter extends MethodVisitor {
         mv.visitMethodInsn(Opcodes.INVOKESPECIAL, exceptionName, "<init>", "()V");
 
         mv.visitInsn(Opcodes.ATHROW);
-        super.visitEnd();
+
     }
 
 }

@@ -2,7 +2,7 @@
  * Alipay.com Inc.
  * Copyright (c) 2004-2014 All Rights Reserved.
  */
-package com.alipay.faultinject.attach;
+package com.alipay.faultinject.attach.utils;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -20,18 +20,17 @@ import javax.management.remote.JMXServiceURL;
  * @version $Id: RemoteAttachThread.java, v 0.1 2014-2-17 ÏÂÎç1:23:24 yimingwym Exp $
  */
 
-public class RemoteAttachThread extends Thread {
+public class RemoteInfoUtils {
 
     private final String host;
     private final String port;
 
-    public RemoteAttachThread(String host, String port) {
+    public RemoteInfoUtils(String host, String port) {
         this.host = host;
         this.port = port;
     }
 
-    @Override
-    public void run() {
+    public String getRemotePid() {
 
         try {
             String url = "service:jmx:rmi:///jndi/rmi://" + host + ":" + port + "/jmxrmi";
@@ -43,23 +42,27 @@ public class RemoteAttachThread extends Thread {
 
             ObjectName systemInfo = new ObjectName(ManagementFactory.RUNTIME_MXBEAN_NAME);
 
-            System.out.println(ManagementFactory.getRuntimeMXBean().getName());
-
             Set<ObjectName> mbeans = mbsc.queryNames(systemInfo, null);
             for (ObjectName name : mbeans) {
                 RuntimeMXBean runtimeBean;
                 runtimeBean = ManagementFactory.newPlatformMXBeanProxy(mbsc, name.toString(),
                     RuntimeMXBean.class);
 
-                System.out.println(runtimeBean.getName());
+                return getPidFromName(runtimeBean.getName());
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    private String getPidFromName(String runtimeBeanName) {
+        return runtimeBeanName.split("@")[0];
     }
 
     public static void main(String[] args) {
-        new RemoteAttachThread("dlslock2.d59.alipay.net", "9981").start();
+        String pid = new RemoteInfoUtils("dlslock2.d59.alipay.net", "9981").getRemotePid();
+        System.out.println(pid);
     }
 }

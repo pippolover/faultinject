@@ -11,6 +11,11 @@
 			<artifactId>asm</artifactId>
 			<version>4.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm-util</artifactId>
+			<version>4.1</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -24,19 +29,31 @@
 					<encoding>GBK</encoding>
 				</configuration>
 			</plugin>
+
+
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
+				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
 					<archive>
 						<manifestEntries>
 							<Premain-Class>com.alipay.faultinject.PreMain</Premain-Class>
 							<Agent-Class>com.alipay.faultinject.FaultInjectAgentMain</Agent-Class>
-
 						</manifestEntries>
 					</archive>
 				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
