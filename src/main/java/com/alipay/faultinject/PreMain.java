@@ -6,7 +6,7 @@ package com.alipay.faultinject;
 
 import java.lang.instrument.Instrumentation;
 
-import com.alipay.faultinject.transformer.falutInjectTransformer;
+import com.alipay.faultinject.rmi.server.InvokeServiceServer;
 
 /**
  * 
@@ -16,8 +16,15 @@ import com.alipay.faultinject.transformer.falutInjectTransformer;
 public class PreMain {
 
     public static void premain(String agentArgs, Instrumentation inst) {
-        inst.addTransformer(new falutInjectTransformer(""));
-        System.out.println("in premain method");
+        //        inst.addTransformer(new falutInjectTransformer(""));
+        //        System.out.println("in premain method");
+        System.out.println("do nothing");
+        try {
+            InvokeServiceServer is = new InvokeServiceServer();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
 }

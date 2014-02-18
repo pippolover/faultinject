@@ -31,7 +31,7 @@
 				<configuration>
 					<archive>
 						<manifestEntries>
-							<!-- <Premain-Class>com.alipay.faultinject.PreMain</Premain-Class> -->
+							<Premain-Class>com.alipay.faultinject.PreMain</Premain-Class>
 							<Agent-Class>com.alipay.faultinject.FaultInjectAgentMain</Agent-Class>
 
 						</manifestEntries>
