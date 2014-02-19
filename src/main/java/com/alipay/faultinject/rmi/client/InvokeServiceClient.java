@@ -8,6 +8,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Properties;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import com.alipay.faultinject.attach.utils.RemoteInfoUtils;
 import com.alipay.faultinject.rmi.InvokeService;
 
@@ -17,6 +20,7 @@ import com.alipay.faultinject.rmi.InvokeService;
  * @version $Id: InvokeServiceClient.java, v 0.1 2014-2-17 ÏÂÎç3:52:31 yimingwym Exp $
  */
 public class InvokeServiceClient {
+    static final Logger  logger = LogManager.getLogger(InvokeServiceClient.class.getName());
     private final String host;
     private final int    port;
 
@@ -30,7 +34,7 @@ public class InvokeServiceClient {
         if (registry != null) {
             String[] availRemoteServices = registry.list();
             for (int i = 0; i < availRemoteServices.length; i++) {
-                System.out.println("Service " + i + ": " + availRemoteServices[i]);
+                logger.info("Service " + i + ": " + availRemoteServices[i]);
             }
         }
         InvokeService rmiServer = (InvokeService) (registry.lookup("faultInjectService"));
