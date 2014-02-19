@@ -19,19 +19,23 @@ import com.alipay.faultinject.transformer.falutInjectTransformer;
 public class FaultInjectAgentMain {
 
     public static void agentmain(String agentArgs, Instrumentation inst) throws Exception {
-        System.out.println("in agentmain method");
+
         Properties pros = loadConfig();
         String className = pros.getProperty("class");
         String methodName = pros.getProperty("method");
         String injectFaultName = pros.getProperty("fault");
+        //先把transformer加入instrumentation, 后续如果发现类已经被加载了，就做retransform
+        //否则就直接转化
+        falutInjectTransformer ft = new falutInjectTransformer(className, methodName,
+            injectFaultName);
+        inst.addTransformer(ft, true);
+
         Class[] cls = inst.getAllLoadedClasses();
         for (Class clazz : cls) {
             if (clazz.getName().startsWith(className)) {
-                falutInjectTransformer ft = new falutInjectTransformer(clazz.getName(), methodName,
-                    injectFaultName);
-                inst.addTransformer(ft, true);
+
                 inst.retransformClasses(clazz);
-                break;
+                //break;
             }
         }
     }

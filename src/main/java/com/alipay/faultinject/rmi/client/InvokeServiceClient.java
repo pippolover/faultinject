@@ -51,8 +51,8 @@ public class InvokeServiceClient {
         InvokeServiceClient client = new InvokeServiceClient("dlslock2.d59.alipay.net", 10024);
         InvokeService service = client.call();
         Properties pros = new Properties();
-        pros.put("class", "com.alipay.lock.processor.policy.RepleaseQueuePolicy");
-        pros.put("method", "getHashIndex");
+        pros.put("class", "com.alipay.lock.processor.policy.HasLockPolicy");
+        pros.put("method", "hasChild");
         pros.put("fault", "runtimeException");
         client.genConfig(service, pros);
         client.injectFault(service, pid);
