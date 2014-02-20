@@ -11,6 +11,7 @@ import java.util.Properties;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
+import com.alipay.faultinject.asm.constant.INJECTDEFAULT;
 import com.alipay.faultinject.attach.utils.RemoteInfoUtils;
 import com.alipay.faultinject.rmi.InvokeService;
 
@@ -20,9 +21,9 @@ import com.alipay.faultinject.rmi.InvokeService;
  * @version $Id: InvokeServiceClient.java, v 0.1 2014-2-17 ÏÂÎç3:52:31 yimingwym Exp $
  */
 public class InvokeServiceClient {
-    static final Logger  logger = LogManager.getLogger(InvokeServiceClient.class.getName());
-    private final String host;
-    private final int    port;
+    private static final Logger logger = LogManager.getLogger(InvokeServiceClient.class.getName());
+    private final String        host;
+    private final int           port;
 
     public InvokeServiceClient(String host, int port) {
         this.host = host;
@@ -50,16 +51,26 @@ public class InvokeServiceClient {
         service.invokeFaultInject(pid);
     }
 
+    public void restoreFault(InvokeService service, String pid) throws Exception {
+        service.restoreClass(pid);
+    }
+
     public static void main(String[] args) throws Exception {
-        String pid = new RemoteInfoUtils("dlslock2.d59.alipay.net", "9981").getRemotePid();
-        InvokeServiceClient client = new InvokeServiceClient("dlslock2.d59.alipay.net", 10024);
+        String pid = new RemoteInfoUtils("aliosfree-1-251.lab.alipay.net", "9981").getRemotePid();
+        InvokeServiceClient client = new InvokeServiceClient("aliosfree-1-251.lab.alipay.net",
+            10024);
         InvokeService service = client.call();
         Properties pros = new Properties();
         pros.put("class", "com.alipay.lock.processor.policy.HasLockPolicy");
         pros.put("method", "hasChild");
         pros.put("fault", "runtimeException");
+        //pros.put("phase", INJECTDEFAULT.INJECTPHASE);
+        pros.put("phase", INJECTDEFAULT.RESTOREPHASE);
         client.genConfig(service, pros);
-        client.injectFault(service, pid);
+
+        //client.injectFault(service, pid);
+
+        client.restoreFault(service, pid);
 
     }
 }

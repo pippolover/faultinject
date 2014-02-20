@@ -4,20 +4,22 @@
  */
 package com.alipay.faultinject.transformer;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.util.CheckClassAdapter;
 
 import com.alipay.faultinject.asm.adapter.faultInjectAdapter;
+import com.alipay.faultinject.attach.utils.ClassUtils;
 
 /**
  * 
@@ -26,9 +28,11 @@ import com.alipay.faultinject.asm.adapter.faultInjectAdapter;
  */
 public class falutInjectTransformer implements ClassFileTransformer {
 
-    private final String needToTransClassName;
-    private final String methodName;
-    private final String injectFault;
+    private static final Logger logger = LogManager.getLogger(falutInjectTransformer.class);
+
+    private final String        needToTransClassName;
+    private final String        methodName;
+    private final String        injectFault;
 
     public falutInjectTransformer(String needToTransClassName, String methodName, String injectFault) {
         this.needToTransClassName = needToTransClassName;
@@ -45,7 +49,10 @@ public class falutInjectTransformer implements ClassFileTransformer {
                                                                                       throws IllegalClassFormatException {
 
         if (className.equals(needToTransClassName.replace(".", "/"))) {
-            String rawName = getRawName(needToTransClassName);
+
+            logger.info(className + ":start to transform");
+
+            ClassUtils.storeOriClassFile("/home/admin/logs/", className, classfileBuffer);
             ClassReader cr;
             try {
                 cr = new ClassReader(className.replace("/", "."));
@@ -55,35 +62,20 @@ public class falutInjectTransformer implements ClassFileTransformer {
                 cr.accept(classVisitor, ClassReader.SKIP_DEBUG);
 
                 byte[] classFile = cw.toByteArray();
-                CheckClassAdapter.verify(new ClassReader(classFile), false, new PrintWriter(
-                    System.out));
-                storeClassFile("/home/admin/logs/" + rawName + ".class", classFile);
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                CheckClassAdapter.verify(new ClassReader(classFile), false, pw);
+                logger.info("CheckClassAdapter: " + sw.toString());
+
                 return classFile;
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("IO Exception", e);
             } catch (Throwable e) {
-                e.printStackTrace();
+                logger.error("遇到未知问题", e);
             }
 
         }
         return null;
-    }
-
-    private String getRawName(String name) {
-        String[] list = name.split("\\.");
-        return list[list.length - 1];
-
-    }
-
-    private void storeClassFile(String path, byte[] classFile) {
-        try {
-            File file = new File(path);
-            FileOutputStream stream = new FileOutputStream(file);
-            stream.write(classFile);
-            stream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 }

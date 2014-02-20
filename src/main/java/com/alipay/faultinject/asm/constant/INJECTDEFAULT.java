@@ -9,9 +9,11 @@ package com.alipay.faultinject.asm.constant;
  * @author yimingwym 
  * @version $Id: INJECTEDFAULT.java, v 0.1 2014-2-18 обнГ8:41:11 yimingwym Exp $
  */
-public class INJECTEDFAULT {
+public class INJECTDEFAULT {
 
     public static String SLEEP              = "sleep";
     public static String NULLPOINTEXCEPTION = "runtimeException";
+    public static String INJECTPHASE        = "inject";
+    public static String RESTOREPHASE       = "restore";
 
 }

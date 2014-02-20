@@ -21,4 +21,6 @@ public interface InvokeService extends java.rmi.Remote {
     public void genConfig(Properties pros) throws Exception;
 
     public Properties loadConfig() throws Exception;
+
+    public void restoreClass(String pid) throws RemoteException;
 }

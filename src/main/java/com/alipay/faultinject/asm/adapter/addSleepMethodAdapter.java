@@ -6,6 +6,8 @@ package com.alipay.faultinject.asm.adapter;
 
 import static org.objectweb.asm.Opcodes.ASM4;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -17,6 +19,7 @@ import org.objectweb.asm.Type;
  * @version $Id: addSleepMethodAdapter.java, v 0.1 2014-2-10 下午3:05:35 yimingwym Exp $
  */
 public class addSleepMethodAdapter extends MethodVisitor {
+    private static final Logger logger = LogManager.getLogger(addSleepMethodAdapter.class);
 
     public addSleepMethodAdapter(MethodVisitor methodVisitor) {
         super(ASM4, methodVisitor);
@@ -26,7 +29,7 @@ public class addSleepMethodAdapter extends MethodVisitor {
     // 在源方法前去修改方法内容,这部分的修改将加载源方法的字节码之前 
     @Override
     public void visitCode() {
-        System.out.println("add sleep method");
+        logger.info("add sleep method");
         /*        // 记载隐含的this对象，这是每个JAVA方法都有的
                 mv.visitVarInsn(Opcodes.ALOAD, 0);
                 // 加载userName字符到栈顶  

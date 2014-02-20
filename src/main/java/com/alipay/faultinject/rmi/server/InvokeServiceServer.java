@@ -54,6 +54,11 @@ public class InvokeServiceServer extends UnicastRemoteObject implements InvokeSe
 
     }
 
+    @Override
+    public void restoreClass(String pid) throws RemoteException {
+        new JVMAttachThread("/home/admin/faultinject-0.0.1.jar", pid).start();
+    }
+
     public static void main(String[] args) throws Exception {
         InvokeServiceServer is = new InvokeServiceServer();
         Properties pros = new Properties();
@@ -65,5 +70,4 @@ public class InvokeServiceServer extends UnicastRemoteObject implements InvokeSe
         //is.startServer();
         //is.invokeFaultInject();
     }
-
 }
