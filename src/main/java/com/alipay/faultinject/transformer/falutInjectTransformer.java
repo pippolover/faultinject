@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import java.util.Properties;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -30,14 +31,10 @@ public class falutInjectTransformer implements ClassFileTransformer {
 
     private static final Logger logger = LogManager.getLogger(falutInjectTransformer.class);
 
-    private final String        needToTransClassName;
-    private final String        methodName;
-    private final String        injectFault;
+    private final Properties    configPros;
 
-    public falutInjectTransformer(String needToTransClassName, String methodName, String injectFault) {
-        this.needToTransClassName = needToTransClassName;
-        this.methodName = methodName;
-        this.injectFault = injectFault;
+    public falutInjectTransformer(Properties configPros) {
+        this.configPros = configPros;
     }
 
     /** 
@@ -47,15 +44,18 @@ public class falutInjectTransformer implements ClassFileTransformer {
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
                             ProtectionDomain protectionDomain, byte[] classfileBuffer)
                                                                                       throws IllegalClassFormatException {
-
+        String needToTransClassName = configPros.getProperty("class");
+        String methodName = configPros.getProperty("method");
+        String injectFault = configPros.getProperty("fault");
         if (className.equals(needToTransClassName.replace(".", "/"))) {
 
             logger.info(className + ":start to transform");
 
-            ClassUtils.storeOriClassFile("/home/admin/logs/", className, classfileBuffer);
+            ClassUtils.storeClassFile("/home/admin/logs/", className, classfileBuffer);
             ClassReader cr;
             try {
-                cr = new ClassReader(className.replace("/", "."));
+                cr = new ClassReader(classBeingRedefined.getClassLoader().getResourceAsStream(
+                    className + ".class"));
                 ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
                 ClassVisitor classVisitor = new faultInjectAdapter(cw, methodName, injectFault);
 
@@ -65,6 +65,7 @@ public class falutInjectTransformer implements ClassFileTransformer {
                 StringWriter sw = new StringWriter();
                 PrintWriter pw = new PrintWriter(sw);
                 CheckClassAdapter.verify(new ClassReader(classFile), false, pw);
+                ClassUtils.storeClassFile("/home/admin/logs/modified", className, classFile);
                 logger.info("CheckClassAdapter: " + sw.toString());
 
                 return classFile;
@@ -77,5 +78,4 @@ public class falutInjectTransformer implements ClassFileTransformer {
         }
         return null;
     }
-
 }

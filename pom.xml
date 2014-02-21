@@ -50,6 +50,7 @@
 						<manifestEntries>
 							<Premain-Class>com.alipay.faultinject.PreMain</Premain-Class>
 							<Agent-Class>com.alipay.faultinject.FaultInjectAgentMain</Agent-Class>
+							<Boot-Class-Path>/opt/taobao/java/lib/tools.jar</Boot-Class-Path>
 						</manifestEntries>
 					</archive>
 				</configuration>

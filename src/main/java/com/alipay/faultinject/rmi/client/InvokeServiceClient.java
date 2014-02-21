@@ -56,13 +56,13 @@ public class InvokeServiceClient {
     }
 
     public static void main(String[] args) throws Exception {
-        String pid = new RemoteInfoUtils("aliosfree-1-251.lab.alipay.net", "9981").getRemotePid();
-        InvokeServiceClient client = new InvokeServiceClient("aliosfree-1-251.lab.alipay.net",
-            10024);
+        String targetHost = "cloudenginetest.shd89.alipay.net";
+        String pid = new RemoteInfoUtils(targetHost, "9981").getRemotePid();
+        InvokeServiceClient client = new InvokeServiceClient(targetHost, 10024);
         InvokeService service = client.call();
         Properties pros = new Properties();
-        pros.put("class", "com.alipay.lock.processor.policy.HasLockPolicy");
-        pros.put("method", "hasChild");
+        pros.put("class", "com.alipay.cloudenginetest.performance.service.impl.WsServiceImpl");
+        pros.put("method", "WsServicePerfTest");
         pros.put("fault", "runtimeException");
         //pros.put("phase", INJECTDEFAULT.INJECTPHASE);
         pros.put("phase", INJECTDEFAULT.RESTOREPHASE);

@@ -34,8 +34,7 @@ public class FaultInjectAgentMain {
         //先把transformer加入instrumentation, 后续如果发现类已经被加载了，就做retransform
         //否则就直接转化
         if (phase.equals(INJECTDEFAULT.INJECTPHASE)) {
-            falutInjectTransformer ft = new falutInjectTransformer(className, methodName,
-                injectFaultName);
+            falutInjectTransformer ft = new falutInjectTransformer(pros);
             inst.addTransformer(ft, true);
         } else if (phase.equals(INJECTDEFAULT.RESTOREPHASE)) {
             restoreTransformer rf = new restoreTransformer(className);
