@@ -4,6 +4,9 @@
  */
 package com.alipay.faultinject.attach;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import com.sun.tools.attach.VirtualMachine;
 
 /**
@@ -14,6 +17,7 @@ import com.sun.tools.attach.VirtualMachine;
 @SuppressWarnings("restriction")
 public class JVMAttachThread extends Thread {
 
+    private final Logger logger = LogManager.getLogger(JVMAttachThread.class);
     private final String agentJar;
     private final String pid;
 
@@ -31,7 +35,9 @@ public class JVMAttachThread extends Thread {
             vm.detach();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("JVMAttachThread got Exception", e);
+        } catch (Throwable e) {
+            logger.error("JVMAttachThread got Throwable", e);
         }
     }
 

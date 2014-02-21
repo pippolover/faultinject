@@ -43,14 +43,14 @@ public class ClassUtils {
     }
 
     /**
-     * 保存被修改前的class文件
+     * 保存class文件
      * 
      * @param path
      * @param className className with slash : com/alipay/example
      * @param classFile
      * 
      */
-    public static void storeOriClassFile(String path, String className, byte[] classFile) {
+    public static void storeClassFile(String path, String className, byte[] classFile) {
         try {
             if (!path.endsWith("/")) {
                 path += "/";
